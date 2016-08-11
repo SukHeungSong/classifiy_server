@@ -21,6 +21,8 @@ def test() :
         cate = ";".join([each[1]['cate1'], each[1]['cate2'], each[1]['cate3']])
         d_list.append(each[1]['name'])
         cate_list.append(cate)
+
+    print(d_list)
     # 같은종류를 묶어서 하나로...group by와 같다!!
     # print(set(cate_list))
     # object to list
@@ -32,11 +34,8 @@ def test() :
 
     cate_dict = dict(zip(list(set(cate_list)), range(len(set(cate_list)))))
 
-    # print(cate_dict)
-    # print(cate_dict['디지털/가전;PC부품;CPU'])
-
-    # 각 상품별로 name의 문장에 있는 단어들을 빈도수를 matrix형태로 만든다.
-    vectorizer = CountVectorizer()
+    # print(cate_dict), {'디지털/가전;PC부품;CPU' : O, '패션의류;아동의류;한복':1}
+    # print(cate_dict['디지털/가전;PC부품;CPU']), 0
 
     # 단어 형태의 카테고리명에 대응되는 serial_id값들을 넣는다.
     y_list = []
@@ -44,7 +43,17 @@ def test() :
         cate = ";".join([each[1]['cate1'], each[1]['cate2'], each[1]['cate3']])
         y_list.append(cate_dict[cate])
 
-    print(y_list)
+
+    # 각 상품별로 name의 문장에 있는 단어들을 빈도수를 matrix형태로 만든다.
+    vectorizer = CountVectorizer()
+    x_list = vectorizer.fit_transform(d_list)
+
+    # print(x_list)
+
+    # 단어들 출력
+    for x in x_list:
+        for word in x.indices :
+            print(vectorizer.get_feature_names()[word])
     return
 
 test()
