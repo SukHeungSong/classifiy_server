@@ -44,6 +44,7 @@ def test() :
         cate = ";".join([each[1]['cate1'], each[1]['cate2'], each[1]['cate3']])
         y_list.append(cate_dict[cate])
 
+    print(y_list)
     return
 
 test()
