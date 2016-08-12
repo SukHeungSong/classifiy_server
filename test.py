@@ -1,11 +1,22 @@
+
+# feture를 기존 저장되어 있는 data와 비교하여 가장 유사도가 높은 ID를 찾아내서 분류한다
+#
+#
+
+
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
+
+# SVM을 이용해서 분류학습한다
+from sklearn.svm import LinearSVC
+from sklearn.grid_search import GridSearchCV
+import numpy as np
 
 
 
 def test() :
 
-    path = "./soma_classifier.csv"
+    path = "./soma_classifier1.csv"
     train_df = pd.read_csv(path)
     # print(train_df)
 
@@ -22,7 +33,7 @@ def test() :
         d_list.append(each[1]['name'])
         cate_list.append(cate)
 
-    print(d_list)
+    # print(d_list)
     # 같은종류를 묶어서 하나로...group by와 같다!!
     # print(set(cate_list))
     # object to list
@@ -51,9 +62,25 @@ def test() :
     # print(x_list)
 
     # 단어들 출력
-    for x in x_list:
-        for word in x.indices :
-            print(vectorizer.get_feature_names()[word])
+    # for x in x_list:
+    #     for word in x.indices :
+    #         print(vectorizer.get_feature_names()[word])
+
+    vectorizer10 = CountVectorizer(max_features=10)
+    x10_list = vectorizer10.fit_transform(d_list)
+
+    # print(len(vectorizer10.get_feature_names()))
+    # # 단어들 출력
+    # for x10 in x10_list:
+    #     for word in x10.indices :
+    #         print(vectorizer10.get_feature_names()[word])
+
+
+    svc_param = {'C': np.logspace(-2, 0, 20)}
+    gs_svc = GridSearchCV(LinearSVC(loss='l2'), svc_param, cv=5, n_jobs=4)
+    gs_svc.fit(x_list, y_list)
+    print(gs_svc.best_params_, gs_svc.best_score_)
+
     return
 
 test()
