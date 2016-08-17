@@ -43,8 +43,10 @@ def classifier():
 
 def test() :
 
-    path = "./soma_classifier1.csv"
-    train_df = pd.read_csv(path)
+    # path = "./soma_classifier1.csv"
+    # train_df = pd.read_csv(path)
+    train_df = pd.read_pickle("soma_goods_train.df")
+
     # print(train_df)
 
     # 학습하는 상품 name들을 리스트로 만든다.
@@ -93,8 +95,8 @@ def test() :
     #     for word in x.indices :
     #         print(vectorizer.get_feature_names()[word])
 
-    vectorizer10 = CountVectorizer(max_features=10)
-    x10_list = vectorizer10.fit_transform(d_list)
+    vectorizer100 = CountVectorizer(max_features=1000)
+    x100_list = vectorizer100.fit_transform(d_list)
 
     # print(len(vectorizer10.get_feature_names()))
     # # 단어들 출력
@@ -106,11 +108,12 @@ def test() :
     svc_param = {'C': np.logspace(-2, 0, 20)}
     gs_svc = GridSearchCV(LinearSVC(loss='l2'), svc_param, cv=5, n_jobs=4)
     gs_svc.fit(x_list, y_list)
-    # print(gs_svc.best_params_, gs_svc.best_score_)
+
+    print(gs_svc.best_params_, gs_svc.best_score_)
 
 
-    clf = LinearSVC(C=gs_svc.best_params_['C'])
-    clf.fit(x_list, y_list)
+    # clf = LinearSVC(C=gs_svc.best_params_['C'])
+    # clf.fit(x_list, y_list)
 
     # joblib.dump(clf, 'classify.model', compress=3)
     # joblib.dump(cate_dict, 'cate_dict.dat', compress=3)
@@ -167,6 +170,6 @@ def flaskrun(app, default_host="127.0.0.1",
     )
 
 
-# test()
-if __name__ == '__main__':
-    flaskrun(app)
+test()
+# if __name__ == '__main__':
+#     flaskrun(app)
