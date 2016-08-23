@@ -1,8 +1,8 @@
+# -*- coding: utf-8 -*-
+
 from sklearn.externals import joblib
-from bottle import route, run, template,request,get, post
+from bottle import route, run, request
 
-
-import  time
 
 
 clf = joblib.load('classify.model')

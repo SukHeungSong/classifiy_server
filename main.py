@@ -1,16 +1,13 @@
+# -*- coding: utf-8 -*-
 
 # feture를 기존 저장되어 있는 data와 비교하여 가장 유사도가 높은 ID를 찾아내서 분류한다
 
 # stop word removal
-import nltk
-from nltk.tokenize import word_tokenize
-from konlpy.tag import Twitter
+# from nltk.tokenize import word_tokenize
+# from konlpy.tag import Twitter
 
 from nltk import collocations
-from nltk.tag import pos_tag
-
-from nltk.corpus import gutenberg
-from nltk import regexp_tokenize
+# from nltk.tag import pos_tag
 
 
 #한글 형태소 분석기
