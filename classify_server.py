@@ -4,7 +4,6 @@ from sklearn.externals import joblib
 from bottle import route, run, request
 
 
-
 clf = joblib.load('classify.model')
 cate_dict = joblib.load('cate_dict.dat')
 vectorizer = joblib.load('vectorizer.dat')
