@@ -114,7 +114,7 @@ def setModel() :
         words.append(' '.join(tokens))
 
     # print(type(words[0]))
-    print(words_kor)
+    print(words)
 
 
     words_eng = []
