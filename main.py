@@ -51,17 +51,17 @@ def classifier():
 
 
     print("classify called")
-    img = request.GET.get('img','')
-    name = request.GET.get('name', '')
-    pred = clf.predict(vectorizer.transform([name]))[0]
-    print(cate_dict[pred])
-    return {'cate':cate_dict[pred]}
+    # img = request.GET.get('img','')
+    # name = request.GET.get('name', '')
+    # pred = clf.predict(vectorizer.transform([name]))[0]
+    # print(cate_dict[pred])
+    # return {'cate'}
 
 
     # logging.info('Image: %s', name)
     # result = app.clf.classify_image(image)
 
-    # return flask.jsonify(name)
+    return flask.jsonify("test")
 
 
 def setModel() :
@@ -270,11 +270,11 @@ def flaskrun(app, default_host="127.0.0.1",
         port=int(options.port)
     )
 
-setModel()
+# setModel()
 
 # test()
 
 
 #     server start
-# if __name__ == '__main__':
-#     flaskrun(app)
+if __name__ == '__main__':
+    flaskrun(app)
