@@ -14,6 +14,7 @@ from nltk import collocations
 from konlpy.tag import Twitter
 pos_tagger = Twitter()
 
+import socket
 
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
@@ -274,6 +275,10 @@ def flaskrun(app, default_host="127.0.0.1",
 
 # test()
 
+
+
+lan = socket.gethostbyname(socket.gethostname())
+print("ip : " + lan)
 
 #     server start
 if __name__ == '__main__':
