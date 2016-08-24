@@ -3,18 +3,21 @@
 # feture를 기존 저장되어 있는 data와 비교하여 가장 유사도가 높은 ID를 찾아내서 분류한다
 
 # stop word removal
-# from nltk.tokenize import word_tokenize
 # from konlpy.tag import Twitter
 
 from nltk import collocations
-# from nltk.tag import pos_tag
+from nltk.tokenize import word_tokenize
+
+from nltk import regexp_tokenize
+
+from nltk.tag import pos_tag
 
 
 #한글 형태소 분석기
 from konlpy.tag import Twitter
 pos_tagger = Twitter()
 
-import socket
+import nltk
 
 import pandas as pd
 from sklearn.feature_extraction.text import CountVectorizer
@@ -69,14 +72,16 @@ def setModel() :
     measures = collocations.BigramAssocMeasures()
     twitter = Twitter()
 
-    # path = "./soma_classifier.csv"
-    # train_df = pd.read_csv(path)
-    train_df = pd.read_pickle("soma_goods_train.df")
+    path = "./soma_classifier.csv"
+    train_df = pd.read_csv(path)
+    # train_df = pd.read_pickle("soma_goods_train.df")
 
     # nltk.download("stopwords")
     # nltk.download("punkt")
     # nltk.download("maxent_treebank_pos_tagger")
-    # nltk.download()
+    # nltk.download('maxent_treebank_pos_tagger')
+
+    # nltk.download("all")
 
     # pattern = r'''(?x) ([A-Z]\.)+ | \w+(-\w+)* | \$?\d+(\.\d+)?%? | \.\.\. | [][.,;"'?():-_`]'''
     # 학습하는 상품 name들을 리스트로 만든다.
@@ -89,6 +94,7 @@ def setModel() :
     for each in train_df.iterrows():
         # join() : ';'를 구분자로 내용들을 합친다
         cate = ";".join([each[1]['cate1'], each[1]['cate2'], each[1]['cate3']])
+
         d_list.append(each[1]['name'])
         cate_list.append(cate)
     # print(type(d_list[0]))
@@ -102,31 +108,59 @@ def setModel() :
     # print(words)
     pattern = r'''(?x) ([A-Za-z]\.)+ | \w+(-\w+)* | \$?\d+(\.\d+)?%? | \.\.\. | [][.,;"'?():-_`]'''
 
-    words_kor =[]
+    pat = r'[a-zA-Z]+'
+    # pat = r'[a - zA - Z]+'
     words=[]
+    words_kor = []
     # print('Collocations among tagged words:')
     for d in d_list :
-        # tokens_en = regexp_tokenize(d, pattern)
-        # tokens = word_tokenize(d)
-        tokens = d.split()
+        tokens = word_tokenize(d)
+        # tokens = d.split()
         # print(tokens)
         # print(twitter.nouns(d))
-        # words_kor.append(' '.join(twitter.nouns(d)))
+        words_kor.append(' '.join(twitter.nouns(d)))
         words.append(' '.join(tokens))
 
-    # print(type(words[0]))
-    print(words)
+    # print(words)
+    # print(words_kor)
+    # print(len(words_kor))
+    words_en = []
 
 
-    words_eng = []
-    # for d in d_list:
-        # print(d)
-        # tagged_sent = pos_tag(d.split())
-        # print(tagged_sent)
+    for word in words:
+        temp = []
+        # print("word : " + word)
+        tokens_en = regexp_tokenize(word, pat)
+        print(tokens_en)
+        temp.append(' '.join(tokens_en))
+        for temp in tokens_en:
+            # print("temp : " + temp)
+            # tagged_word = nltk.pos_tag(temp.split())
+            tagged_word = nltk.pos_tag(word_tokenize(temp))
+            print(tagged_word)
+            nouns = [token for token, pos in tagged_word if pos.startswith('N')]
+            # print(nouns)
+            words_en.append(nouns)
+
+        # words_en.append(temp)
+
+
         # nouns = [word for word, pos in tagged_sent if pos == 'Noun']
         # print(nouns)
+        # words_en.append(nouns)
+
+    # print(words_en)
+    # print(len(words_en))
+    # for word in words_en :
+    #     print(word)
+        # print(word[0])
+
+        # tagged_word = nltk.pos_tag(word[0].split())
+        # nouns = [token for token, pos in tagged_word if pos.startswith('N')]
+        # words_en.append(' '.join(nouns))
 
 
+    # print(len(words_en))
     # print(len(words))
     # 여기까지!!!!!!~~~~~~~~~~~!~!~!~!~!@~!@~!@~!@!~@!@~!~!~!~!~!~!~!~!~!~!~!~!~!~!!!!!!!~~~~~~~~~~~!~!~!~!~!@~!@~!@~!@!~@!@~!~!~!~!~!~!~!~!~!~!~!~!~!~!
 
@@ -154,9 +188,9 @@ def setModel() :
     # print(len(y_list))
 
     # 각 상품별로 name의 문장에 있는 단어들을 빈도수를 matrix형태로 만든다.
-    vectorizer = CountVectorizer()
+    # vectorizer = CountVectorizer()
     # x_list = vectorizer.fit_transform(d_list)
-    x_list = vectorizer.fit_transform(words)
+    # x_list = vectorizer.fit_transform(words)
 
     # print(x_list.shape)
     # print(x_list)
@@ -182,21 +216,21 @@ def setModel() :
     #     for word in x10.indices :
     #         temp = kkma.pos(vectorizer100.get_feature_names()[word])
 
-    svc_param = {'C': np.logspace(-2, 0, 20)}
-    # svc_param = {'C': np.logspace(-2, 0, 5)}
+    # svc_param = {'C': np.logspace(-2, 0, 20)}
+    # # svc_param = {'C': np.logspace(-2, 0, 5)}
+    # #
+    # gs_svc = GridSearchCV(LinearSVC(loss='l2'), svc_param, cv=5, n_jobs=4)
+    # gs_svc.fit(x_list, y_list)
     #
-    gs_svc = GridSearchCV(LinearSVC(loss='l2'), svc_param, cv=5, n_jobs=4)
-    gs_svc.fit(x_list, y_list)
-
-    print(gs_svc.best_params_, gs_svc.best_score_)
-
-
-    clf = LinearSVC(C=gs_svc.best_params_['C'])
-    clf.fit(x_list, y_list)
-
-    joblib.dump(clf, 'classify.model', compress=3)
-    joblib.dump(cate_dict, 'cate_dict.dat', compress=3)
-    joblib.dump(vectorizer, 'vectorizer.dat', compress=3)
+    # print(gs_svc.best_params_, gs_svc.best_score_)
+    #
+    #
+    # clf = LinearSVC(C=gs_svc.best_params_['C'])
+    # clf.fit(x_list, y_list)
+    #
+    # joblib.dump(clf, 'classify.model', compress=3)
+    # joblib.dump(cate_dict, 'cate_dict.dat', compress=3)
+    # joblib.dump(vectorizer, 'vectorizer.dat', compress=3)
     return
 
 def test():
@@ -271,15 +305,15 @@ def flaskrun(app, default_host="127.0.0.1",
         port=int(options.port)
     )
 
-# setModel()
+setModel()
 
 # test()
 
 
 
-lan = socket.gethostbyname(socket.gethostname())
-print("ip : " + lan)
+# lan = socket.gethostbyname(socket.gethostname())
+# print("ip : " + lan)
 
 #     server start
-if __name__ == '__main__':
-    flaskrun(app)
+# if __name__ == '__main__':
+#     flaskrun(app)
